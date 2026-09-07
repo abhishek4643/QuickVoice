@@ -1,12 +1,12 @@
 <div align="center">
 
-# 🎙️ QuickVoice
+# QuickVoice
 
 ### **Open-Source Platform for Building & Operating AI Phone Agents**
 
 _Build intelligent voice assistants that handle real phone calls autonomously_
 
-[![Live Platform](https://img.shields.io/badge/🌐_Platform-quickvoice.co-0A66C2?style=for-the-badge)](https://quickvoice.co)
+[![Live Platform](https://img.shields.io/badge/Platform-quickvoice.co-0A66C2?style=for-the-badge)](https://quickvoice.co)
 [![TypeScript](https://img.shields.io/badge/TypeScript-3178C6?style=for-the-badge&logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
 [![License: AGPL v3](https://img.shields.io/badge/License-AGPL_v3-blue?style=for-the-badge)](https://www.gnu.org/licenses/agpl-3.0)
 [![Docker](https://img.shields.io/badge/Docker-Ready-2496ED?style=for-the-badge&logo=docker&logoColor=white)](https://www.docker.com/)
@@ -15,7 +15,7 @@ _Build intelligent voice assistants that handle real phone calls autonomously_
 
 ---
 
-## 📌 About
+## About
 
 QuickVoice is a **self-hostable**, open-source platform for creating and managing AI-powered phone agents. It enables businesses to automate phone interactions — from customer support to appointment booking — using cutting-edge conversational AI.
 
@@ -23,21 +23,21 @@ QuickVoice is a **self-hostable**, open-source platform for creating and managin
 
 ---
 
-## 🧠 What Makes QuickVoice Powerful
+## What Makes QuickVoice Powerful
 
 | Capability | Description |
 |-----------|-------------|
-| 📞 **Inbound & Outbound Calls** | Handle incoming calls and initiate outgoing campaigns |
-| 🤖 **AI-Driven Conversations** | Natural language understanding with LLM-powered responses |
-| 🔄 **Real-Time Processing** | Sub-second latency via LiveKit WebRTC infrastructure |
-| 🛠️ **Fully Customizable** | Define custom prompts, workflows, and tool integrations |
-| 📊 **Call Analytics** | Track call duration, sentiment, outcomes, and transcripts |
-| 🔌 **Telephony Integrations** | Native support for Twilio, Telnyx, and more |
-| 🏠 **Self-Hostable** | Deploy on your own infrastructure for full data control |
+| **Inbound & Outbound Calls** | Handle incoming calls and initiate outgoing campaigns |
+| **AI-Driven Conversations** | Natural language understanding with LLM-powered responses |
+| **Real-Time Processing** | Sub-second latency via LiveKit WebRTC infrastructure |
+| **Fully Customizable** | Define custom prompts, workflows, and tool integrations |
+| **Call Analytics** | Track call duration, sentiment, outcomes, and transcripts |
+| **Telephony Integrations** | Native support for Twilio, Telnyx, and more |
+| **Self-Hostable** | Deploy on your own infrastructure for full data control |
 
 ---
 
-## 🛠️ Tech Stack
+## Tech Stack
 
 ```
 Frontend:       Next.js · TypeScript · React
@@ -52,7 +52,7 @@ Protocol:       MCP (Model Context Protocol)
 
 ---
 
-## 🚀 Quick Start
+## Quick Start
 
 ### Prerequisites
 - Docker & Docker Compose
@@ -77,7 +77,7 @@ Access the dashboard at [http://localhost:3000](http://localhost:3000)
 
 ---
 
-## 🏗️ Architecture Overview
+## Architecture Overview
 
 ```
 ┌─────────────────────────────────────────────┐
@@ -94,7 +94,7 @@ Access the dashboard at [http://localhost:3000](http://localhost:3000)
 
 ---
 
-## 🤝 Use Cases
+## Use Cases
 
 - **Customer Support Automation** — Handle FAQs, ticket creation, and escalations
 - **Appointment Scheduling** — Book, confirm, and reschedule appointments by phone
@@ -104,7 +104,7 @@ Access the dashboard at [http://localhost:3000](http://localhost:3000)
 
 ---
 
-## 📄 License
+## License
 
 This project is licensed under the **GNU Affero General Public License v3.0** — see the [LICENSE](LICENSE) file for details.
 
@@ -112,6 +112,6 @@ This project is licensed under the **GNU Affero General Public License v3.0** �
 
 <div align="center">
 
-_Empowering businesses with intelligent voice automation_ 🎙️
+_Empowering businesses with intelligent voice automation_
 
 </div>
