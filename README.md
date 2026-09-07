@@ -1,117 +1,150 @@
-<div align="center">
-
 # QuickVoice
 
-### **Open-Source Platform for Building & Operating AI Phone Agents**
+An open-source operating platform for building, deploying, and managing autonomous AI phone agents capable of natural, sub-second latency voice conversations over standard telephony networks.
 
-_Build intelligent voice assistants that handle real phone calls autonomously_
-
-[![Live Platform](https://img.shields.io/badge/Platform-quickvoice.co-0A66C2?style=for-the-badge)](https://quickvoice.co)
+[![Platform](https://img.shields.io/badge/Platform-quickvoice.co-0A66C2?style=for-the-badge)](https://quickvoice.co)
 [![TypeScript](https://img.shields.io/badge/TypeScript-3178C6?style=for-the-badge&logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
-[![License: AGPL v3](https://img.shields.io/badge/License-AGPL_v3-blue?style=for-the-badge)](https://www.gnu.org/licenses/agpl-3.0)
+[![License](https://img.shields.io/badge/License-AGPL_v3-blue?style=for-the-badge)](https://www.gnu.org/licenses/agpl-3.0)
 [![Docker](https://img.shields.io/badge/Docker-Ready-2496ED?style=for-the-badge&logo=docker&logoColor=white)](https://www.docker.com/)
-
-</div>
-
----
-
-## About
-
-QuickVoice is a **self-hostable**, open-source platform for creating and managing AI-powered phone agents. It enables businesses to automate phone interactions — from customer support to appointment booking — using cutting-edge conversational AI.
-
-> _Forked from [allgpt-co/QuickVoice](https://github.com/allgpt-co/QuickVoice) to explore, customize, and contribute to the growing AI voice ecosystem._
+[![WebRTC](https://img.shields.io/badge/WebRTC-LiveKit-FF6B6B?style=for-the-badge)](https://livekit.io/)
 
 ---
 
-## What Makes QuickVoice Powerful
+## Project Overview
 
-| Capability | Description |
-|-----------|-------------|
-| **Inbound & Outbound Calls** | Handle incoming calls and initiate outgoing campaigns |
-| **AI-Driven Conversations** | Natural language understanding with LLM-powered responses |
-| **Real-Time Processing** | Sub-second latency via LiveKit WebRTC infrastructure |
-| **Fully Customizable** | Define custom prompts, workflows, and tool integrations |
-| **Call Analytics** | Track call duration, sentiment, outcomes, and transcripts |
-| **Telephony Integrations** | Native support for Twilio, Telnyx, and more |
-| **Self-Hostable** | Deploy on your own infrastructure for full data control |
+QuickVoice provides production-grade infrastructure for orchestrating voice-based artificial intelligence. Traditional voice bots suffer from unnatural delays and rigid decision trees. QuickVoice solves this by integrating WebRTC audio streaming, streaming speech-to-text, large language model decision engines, and expressive speech synthesis into a sub-500ms conversational loop.
+
+**Vision:** Democratize enterprise-grade conversational AI by providing a developer-first platform that connects any LLM to real-world phone lines with full operational control.
 
 ---
 
-## Tech Stack
+## Live Platform
 
-```
-Frontend:       Next.js · TypeScript · React
-Backend:        FastAPI (Python) · Express.js (Node)
-Real-Time:      LiveKit (WebRTC)
-Database:       PostgreSQL
-Telephony:      Twilio · Telnyx
-AI/ML:          OpenAI GPT · Custom LLM Integration
-Orchestration:  Docker · Docker Compose
-Protocol:       MCP (Model Context Protocol)
-```
+Experience the platform documentation and dashboard:
+- **Platform URL:** [https://quickvoice.co](https://quickvoice.co)
+- **Deployment Status:** Active Production Platform
+- **Deployment Model:** Cloud Hosted & Self-Hostable via Docker
 
 ---
 
-## Quick Start
+## Key Features
 
-### Prerequisites
-- Docker & Docker Compose
-- API keys for Twilio/Telnyx and OpenAI
-
-### Deploy with Docker
-
-```bash
-# Clone the repository
-git clone https://github.com/abhishek4643/QuickVoice.git
-cd QuickVoice
-
-# Configure environment variables
-cp .env.example .env
-# Edit .env with your API keys
-
-# Launch all services
-docker-compose up -d
-```
-
-Access the dashboard at [http://localhost:3000](http://localhost:3000)
-
----
-
-## Architecture Overview
-
-```
-┌─────────────────────────────────────────────┐
-│              QuickVoice Platform             │
-├──────────┬──────────────┬───────────────────┤
-│  Next.js │   FastAPI    │     LiveKit       │
-│   UI     │   Backend    │   Voice Engine    │
-├──────────┴──────────────┴───────────────────┤
-│              PostgreSQL Database             │
-├─────────────────────────────────────────────┤
-│       Twilio / Telnyx Telephony Layer       │
-└─────────────────────────────────────────────┘
-```
+- **Bidirectional Telephony Integration:** Seamless connectivity with Twilio, Telnyx, and SIP trunks for inbound and outbound calling.
+- **Sub-Second Audio Pipeline:** Low-latency WebRTC audio transport powered by LiveKit for interruption-friendly conversations.
+- **Model Context Protocol (MCP) Integration:** Extensible tool execution allowing voice agents to query databases and trigger APIs mid-call.
+- **Comprehensive Agent Dashboard:** Real-time call monitoring, latency breakdown, full audio transcripts, and sentiment tracking.
+- **Multi-Tenant Architecture:** Granular workspace management with role-based access control and telephony credential isolation.
+- **Self-Hostable Deployment:** Complete Docker and Docker Compose definitions for private cloud or on-premise execution.
 
 ---
 
 ## Use Cases
 
-- **Customer Support Automation** — Handle FAQs, ticket creation, and escalations
-- **Appointment Scheduling** — Book, confirm, and reschedule appointments by phone
-- **Lead Qualification** — Screen and qualify sales leads autonomously
-- **Survey & Feedback Collection** — Conduct phone surveys at scale
-- **Order Status & Tracking** — Provide real-time order updates via voice
+### For Contact Centers & Enterprise Support
+- Automate high-frequency customer inquiries and status checks without human queueing.
+- Perform intelligent routing with context passed directly to human agents when escalation occurs.
+
+### For Appointment-Based Healthcare & Services
+- Conduct automated confirmation calls, intake questionnaires, and calendar rescheduling.
+- Send proactive reminders with real-time conversational answers to client questions.
+
+### For Developers & Platform Engineers
+- Prototype customized voice agents with distinct system instructions, knowledge bases, and function hooks.
+- Inspect detailed audio packet telemetry and token generation times for performance tuning.
+
+---
+
+## System Architecture
+
+```
++---------------+       SIP / WebRTC       +-------------------------+
+| Caller / PSTN | <======================> | Telephony Gateway       |
++---------------+                          | (Twilio / Telnyx)       |
+                                           +-------------------------+
+                                                        |
+                                                  Audio Stream
+                                                        v
++------------------+     LiveKit WebRTC     +-------------------------+
+| Voice Agent Core | <===================> | Media Server (LiveKit)  |
+|  - STT Pipeline  |                       +-------------------------+
+|  - LLM Decision  |                                    |
+|  - TTS Engine    | <--- MCP Tool Calls ---> [ Enterprise APIs / DB ]
++------------------+
+```
+
+---
+
+## Technology Stack
+
+| Layer | Technologies |
+|---|---|
+| Dashboard Frontend | Next.js, React, TypeScript, Tailwind CSS |
+| Real-Time Media Engine | LiveKit WebRTC Infrastructure |
+| Telephony Providers | Twilio Voice, Telnyx SIP Trunking |
+| Protocol Standard | Model Context Protocol (MCP) |
+| Containerization | Docker, Docker Compose |
+| Package Monorepo | Turborepo / Yarn Workspaces |
+
+---
+
+## Project Structure
+
+```
+QuickVoice/
+├── apps/                 # Application entrypoints
+│   ├── web/              # Management dashboard and configuration portal
+│   └── agent-server/     # Voice agent runner and WebRTC session controller
+├── packages/             # Shared packages and internal libraries
+│   ├── core/             # Business logic and session lifecycle handlers
+│   ├── telephony/        # Twilio and Telnyx telephony adapters
+│   └── mcp-tools/        # Model Context Protocol tool integrations
+├── docs/                 # Platform guides and API specifications
+├── scripts/              # Build, migration, and deployment utilities
+├── security/             # Security policy and disclosure documentation
+└── docker-compose.yml    # Container composition for local execution
+```
+
+---
+
+## Getting Started
+
+### Prerequisites
+- Docker Engine >= 24.0 and Docker Compose >= 2.20
+- Node.js >= 18.0.0
+- Twilio or Telnyx telephony account credentials
+
+### Installation
+
+1. Clone the repository:
+   ```bash
+   git clone https://github.com/abhishek4643/QuickVoice.git
+   cd QuickVoice
+   ```
+
+2. Configure environment variables:
+   ```bash
+   cp .env.example .env
+   ```
+   Populate your `.env` file with your LiveKit and telephony API keys.
+
+3. Start services via Docker Compose:
+   ```bash
+   docker compose up -d
+   ```
+
+4. Access the web dashboard at `http://localhost:3000`
+
+---
+
+## Future Roadmap
+
+- Advanced voice cloning and custom acoustic model fine-tuning.
+- Multi-party conference calling with autonomous AI moderation.
+- Outbound campaign scheduler with predictive dialing logic.
+- Expanded native CRM integrations for Salesforce and HubSpot.
 
 ---
 
 ## License
 
-This project is licensed under the **GNU Affero General Public License v3.0** — see the [LICENSE](LICENSE) file for details.
-
----
-
-<div align="center">
-
-_Empowering businesses with intelligent voice automation_
-
-</div>
+This project is licensed under the GNU Affero General Public License v3.0 (AGPL-3.0).
