@@ -11,6 +11,8 @@ from handlers import kb_handler
 from handlers.voice_catalog import load_voice_catalog
 from handlers.voice_config_resolution import VoiceConfigValidationError, resolve_voice_config
 from handlers.voice_session_broker import VoiceSessionBroker, VoiceSessionBrokerError
+from handlers.langfuse_middleware import LangfuseAPIMiddleware
+from handlers.langfuse_handler import shutdown_langfuse
 from utils.auth import is_explicit_dev_mode, verify_internal_headers
 
 
@@ -29,9 +31,14 @@ async def _lifespan(_app: FastAPI):
     if not os.environ.get("INTERNAL_API_KEY") and not is_explicit_dev_mode():
         raise RuntimeError("INTERNAL_API_KEY is required for QuickVoice AI API startup")
     yield
+    # Gracefully shut down Langfuse on app shutdown
+    shutdown_langfuse()
 
 
 app = FastAPI(title="QuickVoice AI", lifespan=_lifespan)
+
+# Langfuse observability middleware — traces all API requests
+app.add_middleware(LangfuseAPIMiddleware)
 
 
 @app.middleware("http")

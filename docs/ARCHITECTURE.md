@@ -17,6 +17,11 @@ QuickVoice follows an event-driven, decoupled monorepo architecture separating w
   <img src="./architecture.svg" alt="QuickVoice Architecture Flow" width="100%" />
 </p>
 
+* **Caller / Client (WebRTC / SIP Phone)**: Inbound telephone calls and in-browser voice sessions streaming raw Opus audio over WebRTC.
+* **Next.js Console & Web**: Customer dashboard for agent prompt engineering, call analytics, and audio scrubber controls.
+* **Express API Gateway**: Node.js REST and WebSocket server managing authentication, Prisma ORM, Redis queues, and webhook dispatches.
+* **Python AI Worker**: In-process Silero VAD, Deepgram Nova-2 streaming STT, LLM token streaming, and Cartesia Sonic TTS.
+
 ---
 
 ### 2. Technology Stack

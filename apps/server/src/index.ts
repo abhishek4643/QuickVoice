@@ -13,6 +13,7 @@ import authMiddleware from "./middleware/auth.middleware.js";
 import notFound from "./middleware/notFound.middleware.js";
 import errorHandler from "./middleware/error.middleware.js";
 import rateLimitMiddleware from "./middleware/rateLimit.middleware.js";
+import langfuseMiddleware from "./middleware/langfuse.middleware.js";
 
 import { serve as serveInngest } from "inngest/express";
 import { inngest } from "./config/inngest.js";
@@ -20,6 +21,7 @@ import { inngestFunctions } from "./inngest/index.js";
 import apiRouter from "./router.js";
 import { getReadiness } from "./modules/system/readiness.service.js";
 import { publicWidgetOriginAllowed } from "./modules/widgets/widget.service.js";
+import { shutdownLangfuse } from "./lib/langfuse.js";
 import "./workers/kb.worker.js";
 import "./workers/outbound-batch.worker.js";
 import swaggerUi from "swagger-ui-express";
@@ -116,6 +118,9 @@ app.use(
     skip: (req: Request) => req.method === "OPTIONS",
   })
 );
+
+// Langfuse observability middleware — traces all API requests
+app.use(langfuseMiddleware);
 
 /**
  * =========================
@@ -257,6 +262,8 @@ async function shutdown(signal: NodeJS.Signals) {
     console.error("[server] graceful shutdown failed", error);
     process.exitCode = 1;
   }
+  // Flush Langfuse events before exit
+  await shutdownLangfuse();
 }
 
 process.once("SIGINT", () => void shutdown("SIGINT"));

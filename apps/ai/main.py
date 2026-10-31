@@ -41,6 +41,14 @@ from handlers.voice_provider_adapters import ProviderAdapterError, build_voice_p
 from handlers.voice_worker_metadata import is_voice_session_metadata, parse_voice_session_metadata
 from utils.logger import logger
 from utils.logger import redact_sensitive
+from handlers.langfuse_handler import (
+    create_call_trace,
+    create_span,
+    create_generation_span,
+    finalize_trace,
+    score_trace,
+    shutdown_langfuse,
+)
 import asyncio
 import json
 from datetime import datetime, timezone
@@ -267,6 +275,7 @@ class Assistant(Agent):
         config: dict,
         call_context: dict,
         transcript_collector: TranscriptCollector | None = None,
+        langfuse_trace=None,
     ):
         super().__init__(
             instructions=system_prompt,
@@ -276,6 +285,7 @@ class Assistant(Agent):
         self._call_context = call_context
         self._metadata_collector = CallMetadataCollector(config)
         self._transcript_collector = transcript_collector
+        self._langfuse_trace = langfuse_trace
 
     def _rag_enabled(self) -> bool:
         return bool(self._config.get("use_rag"))
@@ -303,9 +313,20 @@ class Assistant(Agent):
         if not query:
             return
 
+        # ── Langfuse: track RAG retrieval ───────────────────────────────
+        rag_start = datetime.now(timezone.utc)
         try:
             context = await get_rag_context(agent_id=agent_id, query=query)
         except RagRetrievalError:
+            create_span(
+                self._langfuse_trace,
+                name="rag-retrieval",
+                input_data={"query": query, "agent_id": agent_id},
+                output_data={"error": "retrieval_failed"},
+                start_time=rag_start,
+                end_time=datetime.now(timezone.utc),
+                level="ERROR",
+            )
             turn_ctx.add_message(
                 role="system",
                 content=(
@@ -315,6 +336,15 @@ class Assistant(Agent):
             )
             logger.warning("[rag] injected unavailable signal for agent={}", redact_sensitive(agent_id))
             return
+
+        create_span(
+            self._langfuse_trace,
+            name="rag-retrieval",
+            input_data={"query": query, "agent_id": agent_id},
+            output_data={"context_length": len(context) if context else 0, "has_results": bool(context)},
+            start_time=rag_start,
+            end_time=datetime.now(timezone.utc),
+        )
 
         if not context:
             logger.info(f"[rag] no context returned for agent={agent_id}")
@@ -436,6 +466,7 @@ class Assistant(Agent):
 
 async def entrypoint(ctx: JobContext):
     logger.info("Entrypoint called with room: {}", redact_sensitive(ctx.room.name))
+    langfuse_trace = None  # Langfuse trace for this call session
 
     await ctx.connect()
     raw_metadata = ctx.job.metadata or ""
@@ -479,6 +510,18 @@ async def entrypoint(ctx: JobContext):
         config = attach_resolved_voice_config(config)
     logger.info("Config loaded for agent: {}", redact_sensitive(config.get("agent_id")))
 
+    # ── Langfuse: create a trace for this voice call ──────────────────────
+    langfuse_trace = create_call_trace(
+        call_id=call_context.get("call_id") or ctx.room.name,
+        agent_id=call_context.get("agent_id") or config.get("agent_id"),
+        direction=call_context.get("direction", "inbound"),
+        config=config,
+        metadata={
+            "room_name": ctx.room.name,
+            "preview_mode": preview_mode if 'preview_mode' in dir() else False,
+        },
+    )
+
     try:
         await flush_call_log_queue()
     except Exception as error:
@@ -507,6 +550,13 @@ async def entrypoint(ctx: JobContext):
             }
         ),
     )
+    # ── Langfuse: track session creation ───────────────────────────────────
+    create_span(
+        langfuse_trace,
+        name="session-setup",
+        input_data={"llm_model": config.get("llm_model"), "stt_model": config.get("stt_model"), "tts_model": config.get("tts_model")},
+        metadata={"ivr_enabled": config.get("ivr_navigation_enabled"), "use_rag": config.get("use_rag")},
+    )
     session = AgentSession(
         **provider_kwargs,
         vad=silero.VAD.load(),
@@ -531,6 +581,7 @@ async def entrypoint(ctx: JobContext):
         config=config,
         call_context=call_context,
         transcript_collector=transcript_collector,
+        langfuse_trace=langfuse_trace,
     )
 
     @ctx.room.on("data_received")
@@ -612,6 +663,20 @@ async def entrypoint(ctx: JobContext):
             await call_finalizer.finalize()
         except Exception as error:
             logger.error("[CALL_LOG] Failed to finalize completed call: {}", redact_sensitive(str(error)))
+
+        # ── Langfuse: finalize the call trace ─────────────────────────────
+        ended_at = datetime.now(timezone.utc)
+        duration = (ended_at - call_start_time).total_seconds()
+        score_trace(langfuse_trace, name="call-duration-seconds", value=duration)
+        finalize_trace(
+            langfuse_trace,
+            output={
+                "shutdown_reason": shutdown_reason,
+                "duration_seconds": duration,
+                "agent_id": call_context.get("agent_id") or config.get("agent_id"),
+            },
+            status="COMPLETED",
+        )
 
     if hasattr(ctx, "add_shutdown_callback"):
         ctx.add_shutdown_callback(unified_shutdown_hook)
